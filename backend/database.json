@@ -1,0 +1,126 @@
+{
+  "users": [
+    {
+      "_id": "1",
+      "name": "Admin User",
+      "email": "admin@brahmaputraboard.gov.in",
+      "password": "$2b$10$S93V44YeVZ1IeEX8qp7tHOLjNCkS.wHnZ7FtsqWFY4dTu9Rg5n7oe",
+      "role": "admin",
+      "department": "Administration",
+      "position": "System Administrator",
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    },
+    {
+      "_id": "2",
+      "name": "Supervisor User",
+      "email": "supervisor@brahmaputraboard.gov.in",
+      "password": "$2b$10$S93V44YeVZ1IeEX8qp7tHOLjNCkS.wHnZ7FtsqWFY4dTu9Rg5n7oe",
+      "role": "supervisor",
+      "department": "Engineering",
+      "position": "Chief Engineer",
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    },
+    {
+      "_id": "3",
+      "name": "Employee User",
+      "email": "employee@brahmaputraboard.gov.in",
+      "password": "$2b$10$S93V44YeVZ1IeEX8qp7tHOLjNCkS.wHnZ7FtsqWFY4dTu9Rg5n7oe",
+      "role": "employee",
+      "department": "Engineering",
+      "position": "Junior Engineer",
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    }
+  ],
+  "kpis": [
+    {
+      "_id": "1",
+      "name": "File Disposal Rate",
+      "description": "Number of files processed per day",
+      "category": "headquarters",
+      "weight": 20,
+      "targetValue": 10,
+      "unit": "files/day",
+      "applicableRoles": [
+        "employee",
+        "supervisor"
+      ],
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    },
+    {
+      "_id": "2",
+      "name": "Turnaround Time",
+      "description": "Average time taken to process a file",
+      "category": "headquarters",
+      "weight": 15,
+      "targetValue": 2,
+      "unit": "days",
+      "applicableRoles": [
+        "employee",
+        "supervisor"
+      ],
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    }
+  ],
+  "performanceScores": [
+    {
+      "_id": "1",
+      "userId": "3",
+      "kpiId": "1",
+      "value": 8,
+      "date": "2023-10-01T00:00:00.000Z",
+      "notes": "Good performance but can improve",
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    }
+  ],
+  "projects": [
+    {
+      "_id": "1",
+      "name": "Brahmaputra River Basin Study",
+      "description": "Comprehensive study of the Brahmaputra river basin",
+      "startDate": "2023-01-01T00:00:00.000Z",
+      "endDate": "2023-12-31T00:00:00.000Z",
+      "budget": 5000000,
+      "status": "in-progress",
+      "manager": "2",
+      "team": [
+        "3"
+      ],
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    }
+  ],
+  "expenses": [
+    {
+      "_id": "1",
+      "projectId": "1",
+      "amount": 50000,
+      "category": "Equipment",
+      "date": "2023-02-15T00:00:00.000Z",
+      "description": "Purchase of survey equipment",
+      "approvedBy": "2",
+      "status": "approved",
+      "createdAt": "2025-11-23T03:53:50.480Z",
+      "updatedAt": "2025-11-23T03:53:50.480Z"
+    }
+  ],
+  "tickets": [
+    {
+      "_id": "1",
+      "title": "Request for project information",
+      "description": "RTI request for information about the Brahmaputra River Basin Study",
+      "createdBy": "public@example.com",
+      "assignedTo": "1",
+      "status": "open",
+      "priority": "medium",
+      "category": "rti",
+      "createdAt": "2023-10-01T00:00:00.000Z",
+      "updatedAt": "2023-10-01T00:00:00.000Z"
+    }
+  ]
+}

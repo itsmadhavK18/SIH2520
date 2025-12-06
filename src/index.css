@@ -1,0 +1,265 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Government portal color scheme */
+    --background: 0 0% 98%;
+    --foreground: 210 100% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 100% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 100% 12%;
+
+    /* Navy blue - primary government color */
+    --primary: 210 100% 25%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 100% 20%;
+
+    /* Orange accent for CTAs */
+    --accent: 30 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --accent-hover: 30 100% 45%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 210 100% 12%;
+
+    --muted: 210 25% 92%;
+    --muted-foreground: 210 15% 40%;
+
+    /* KPI status colors */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 25% 85%;
+    --input: 210 25% 85%;
+    --ring: 210 100% 25%;
+
+    --radius: 0.375rem;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 25%), hsl(210 100% 35%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(210 25% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(210 25% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(210 25% 0% / 0.15);
+    --shadow-card-hover: 0 12px 24px -4px hsl(210 100% 25% / 0.15);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 210 100% 12%;
+    --sidebar-primary: 210 100% 25%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 25% 92%;
+    --sidebar-accent-foreground: 210 100% 12%;
+    --sidebar-border: 210 25% 85%;
+    --sidebar-ring: 210 100% 25%;
+  }
+
+  .dark {
+    --background: 210 50% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 210 45% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 210 45% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 100% 55%;
+
+    --accent: 30 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    --accent-hover: 30 100% 55%;
+
+    --secondary: 210 40% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 210 40% 18%;
+    --muted-foreground: 210 20% 65%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+    
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 40% 20%;
+    --input: 210 40% 20%;
+    --ring: 210 100% 60%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(210 100% 20%), hsl(210 100% 30%));
+    --gradient-card: linear-gradient(180deg, hsl(210 45% 12%), hsl(210 40% 15%));
+    
+    --shadow-card-hover: 0 12px 24px -4px hsl(210 100% 60% / 0.2);
+
+    --sidebar-background: 210 50% 10%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 18%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 210 40% 20%;
+    --sidebar-ring: 210 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Government portal styles */
+  .gov-emblem {
+    @apply w-12 h-12 object-contain;
+  }
+
+  .service-icon {
+    @apply w-16 h-16 rounded-full bg-muted flex items-center justify-center transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:scale-105 hover:shadow-md;
+  }
+
+  .kpi-card {
+    @apply bg-card rounded-lg p-6 shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .progress-bar {
+    @apply h-2 rounded-full bg-muted overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full transition-all duration-1000 ease-out;
+  }
+
+  .gov-button-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  .gov-button-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent-hover shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  .carousel-slide {
+    @apply transition-opacity duration-500;
+  }
+
+  /* Animations */
+  @keyframes fade-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes progress-fill {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-fade-slide-in {
+    animation: fade-slide-in 0.4s ease-out;
+  }
+
+  .animate-progress {
+    animation: progress-fill 1.5s ease-out;
+    transform-origin: left;
+  }
+
+  .animate-pulse-dot {
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Blob animations */
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  .animate-blob {
+    animation: blob 7s infinite;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  /* Grid pattern background */
+  .bg-grid-pattern {
+    background-image: radial-gradient(circle, #e5e7eb 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Accessibility */
+  .font-size-small {
+    font-size: 0.875rem;
+  }
+
+  .font-size-normal {
+    font-size: 1rem;
+  }
+
+  .font-size-large {
+    font-size: 1.125rem;
+  }
+
+  .font-size-xlarge {
+    font-size: 1.25rem;
+  }
+}
