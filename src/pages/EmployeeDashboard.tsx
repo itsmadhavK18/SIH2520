@@ -4,6 +4,8 @@ import { KPICard } from "@/components/KPICard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Clock, AlertCircle, FileText, Upload } from "lucide-react";
+import { ReportUploadModal } from "@/components/ReportUploadModal";
+import { ReportList } from "@/components/ReportList";
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -88,16 +90,22 @@ const EmployeeDashboard = () => {
                   <FileText size={18} />
                   Create Request
                 </Button>
-                <Button variant="outline" className="w-full justify-start" size="lg">
-                  <Upload size={18} />
-                  Upload Report
-                </Button>
+                <ReportUploadModal onSuccess={() => window.location.reload()}>
+                  <Button variant="outline" className="w-full justify-start" size="lg">
+                    <Upload size={18} className="mr-2" />
+                    Upload Report
+                  </Button>
+                </ReportUploadModal>
                 <Button variant="outline" className="w-full justify-start" size="lg">
                   <CheckCircle2 size={18} />
                   Self Assessment
                 </Button>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="mt-6">
+            <ReportList userId={user?.id} />
           </div>
 
           {/* Notifications */}

@@ -17,6 +17,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ onLoginClick, currentUser, onLogout }: HeaderProps) => {
+  console.log('Header rendered with currentUser:', currentUser);
   const [fontSize, setFontSize] = useState<"small" | "normal" | "large" | "xlarge">("normal");
   const [language, setLanguage] = useState<"en" | "hi">("en");
 

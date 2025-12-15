@@ -22,6 +22,8 @@ app.use('/api/kpis', require('./routes/kpis'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/expenses', require('./routes/expenses'));
 app.use('/api/tickets', require('./routes/tickets'));
+app.use('/api/reports', require('./routes/reports'));
+app.use('/uploads', express.static('uploads'));
 
 app.get('/', (req, res) => {
   res.send('API is running (File-based DB)...');

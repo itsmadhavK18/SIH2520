@@ -27,21 +27,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
       console.log(`Frontend attempting login for: ${email}`);
       const user = await api.login(email, password);
-      console.log('Login response:', user ? 'Success' : 'Failure');
+      console.log('Login response:', user ? 'Success' : 'Failure', user);
+
       if (user) {
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
+        console.log('User saved to localStorage and context updated');
       } else {
-        setError('Invalid credentials');
+        const errorMsg = 'Invalid credentials';
+        setError(errorMsg);
+        throw new Error(errorMsg);
       }
     } catch (err) {
-      setError('An error occurred during login');
+      const msg = err instanceof Error ? err.message : 'An error occurred during login';
+      setError(msg);
       console.error(err);
+      throw err;
     } finally {
       setLoading(false);
     }

@@ -67,6 +67,18 @@ export interface Ticket {
   category: 'technical' | 'administrative' | 'rti' | 'other';
 }
 
+export interface Report {
+  _id: string;
+  title: string;
+  description: string;
+  filePath: string;
+  fileName: string;
+  fileType: string;
+  uploadedBy: User | string;
+  department: string;
+  createdAt: string;
+}
+
 // Helper to handle fetch errors
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
@@ -194,5 +206,24 @@ export const api = {
     } catch {
       return null;
     }
+  },
+
+  // Reports
+  uploadReport: async (formData: FormData): Promise<Report> => {
+    const response = await fetch(`${API_URL}/reports/upload`, {
+      method: 'POST',
+      body: formData, // Content-Type header excluded for FormData
+    });
+    return handleResponse(response);
+  },
+
+  getAllReports: async (): Promise<Report[]> => {
+    const response = await fetch(`${API_URL}/reports`);
+    return handleResponse(response);
+  },
+
+  getMyReports: async (userId: string): Promise<Report[]> => {
+    const response = await fetch(`${API_URL}/reports/user/${userId}`);
+    return handleResponse(response);
   }
 };

@@ -12,40 +12,41 @@ import { useAuth } from "@/context/AuthContext";
 
 const HomePage = () => {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header
-        onLoginClick={() => setLoginModalOpen(true)}
-        currentUser={user}
-        onLogout={logout}
-      />
+    loading ? <div className="min-h-screen flex items-center justify-center">Loading...</div> :
+      <div className="min-h-screen flex flex-col">
+        <Header
+          onLoginClick={() => setLoginModalOpen(true)}
+          currentUser={user}
+          onLogout={logout}
+        />
 
-      <main className="flex-1">
-        {/* Hero Carousel */}
-        <HeroCarousel />
+        <main className="flex-1">
+          {/* Hero Carousel */}
+          <HeroCarousel />
 
-        {/* Activities Grid */}
-        <ActivitiesGrid />
+          {/* Activities Grid */}
+          <ActivitiesGrid />
 
-        {/* Sticky Notes Section */}
-        <StickyNotes />
+          {/* Sticky Notes Section */}
+          <StickyNotes />
 
-        {/* Milestones Timeline */}
-        <MilestonesTimeline />
+          {/* Milestones Timeline */}
+          <MilestonesTimeline />
 
-        {/* Vision Section */}
-        <VisionSection />
+          {/* Vision Section */}
+          <VisionSection />
 
-        {/* Who We Are */}
-        <WhoWeAre />
-      </main>
+          {/* Who We Are */}
+          <WhoWeAre />
+        </main>
 
-      <Footer />
+        <Footer />
 
-      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
-    </div>
+        <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
+      </div>
   );
 };
 

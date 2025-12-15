@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, FileCheck, AlertTriangle, MapPin } from "lucide-react";
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ReportList } from "@/components/ReportList";
+
 import { useAuth } from "@/context/AuthContext";
 
 const SupervisorDashboard = () => {
@@ -30,7 +33,11 @@ const SupervisorDashboard = () => {
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Supervisor Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user?.name || "Supervisor"} ({user?.position || "Senior Engineer"})</p>
+            <p className="text-muted-foreground">Project oversight and team management</p>
+          </div>
+
+          <div className="mt-6">
+            <ReportList isAdmin />
           </div>
 
           {/* KPI Cards */}

@@ -11,10 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+
+import { ReportList } from "@/components/ReportList";
+
 import { useAuth } from "@/context/AuthContext";
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
 
   const projectData = [
     { month: "Jan", completed: 4, ongoing: 12 },
@@ -77,6 +80,10 @@ const AdminDashboard = () => {
       alert("Failed to connect to server");
     }
   };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -219,13 +226,18 @@ const AdminDashboard = () => {
                   </div>
                 ))}
               </div>
+
             </CardContent>
           </Card>
+
+          <div className="mt-6">
+            <ReportList isAdmin />
+          </div>
         </div>
-      </main>
+      </main >
 
       <Footer />
-    </div>
+    </div >
   );
 };
 
