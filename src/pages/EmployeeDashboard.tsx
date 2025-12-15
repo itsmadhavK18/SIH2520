@@ -9,14 +9,21 @@ import { ReportList } from "@/components/ReportList";
 import { RequestCreationModal } from "@/components/RequestCreationModal";
 import { RequestManagementList } from "@/components/RequestManagementList";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { TaskDetailModal } from "@/components/TaskDetailModal";
 
 import { useAuth } from "@/context/AuthContext";
 
 const EmployeeDashboard = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [selectedTask, setSelectedTask] = useState<any>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const handleViewTask = (task: any) => {
     setSelectedTask(task);
@@ -74,7 +81,7 @@ const EmployeeDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header currentUser={user} onLogout={logout} onLoginClick={() => { }} />
+      <Header currentUser={user} onLogout={handleLogout} onLoginClick={() => { }} />
 
       <main className="flex-1 bg-muted/30">
         <div className="container mx-auto px-4 py-8">

@@ -11,15 +11,22 @@ import { RequestManagementList } from "@/components/RequestManagementList";
 import { ProjectDetailModal } from "@/components/ProjectDetailModal";
 import { TeamMemberDetailModal } from "@/components/TeamMemberDetailModal";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/context/AuthContext";
 
 const SupervisorDashboard = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [memberModalOpen, setMemberModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const handleProjectClick = (project: any) => {
     setSelectedProject(project);
@@ -171,7 +178,7 @@ const SupervisorDashboard = () => {
   /* return ... */
   return (
     <div className="min-h-screen flex flex-col">
-      <Header currentUser={user} onLogout={logout} onLoginClick={() => { }} />
+      <Header currentUser={user} onLogout={handleLogout} onLoginClick={() => { }} />
 
       <main className="flex-1 bg-muted/30">
         <div className="container mx-auto px-4 py-8">

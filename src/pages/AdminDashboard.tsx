@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
+import { useNavigate } from "react-router-dom";
 
 import { ReportList } from "@/components/ReportList";
 import { RequestManagementList } from "@/components/RequestManagementList";
@@ -19,6 +19,12 @@ import { useAuth } from "@/context/AuthContext";
 
 const AdminDashboard = () => {
   const { user, logout, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const projectData = [
     { month: "Jan", completed: 4, ongoing: 12 },
@@ -88,7 +94,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header currentUser={user} onLogout={logout} onLoginClick={() => { }} />
+      <Header currentUser={user} onLogout={handleLogout} onLoginClick={() => { }} />
 
       <main className="flex-1 bg-muted/30">
         <div className="container mx-auto px-4 py-8">
