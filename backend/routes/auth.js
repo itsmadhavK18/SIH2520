@@ -13,6 +13,7 @@ router.post('/register', async (req, res) => {
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
+        console.error("Register Error:", error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -21,6 +22,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(`Login attempt for email: ${email}`);
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: 'User not found' });
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { KPICard } from "@/components/KPICard";
@@ -5,8 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Shield, Settings, Database, Activity } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+import { useAuth } from "@/context/AuthContext";
 
 const AdminDashboard = () => {
+  const { user, logout } = useAuth();
+
   const projectData = [
     { month: "Jan", completed: 4, ongoing: 12 },
     { month: "Feb", completed: 6, ongoing: 11 },
@@ -25,10 +34,54 @@ const AdminDashboard = () => {
     { month: "Jun", score: 91 },
   ];
 
+  const [isAddUserOpen, setIsAddUserOpen] = React.useState(false);
+  const [userData, setUserData] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "employee",
+    department: "",
+    position: ""
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRoleChange = (value: string) => {
+    setUserData(prev => ({ ...prev, role: value }));
+  };
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('http://localhost:5001/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        alert("User added successfully!");
+        setIsAddUserOpen(false);
+        setUserData({ name: "", email: "", password: "", role: "employee", department: "", position: "" });
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.error || error.message || "Failed to add user"}`);
+      }
+    } catch (error) {
+      console.error("Error adding user:", error);
+      alert("Failed to connect to server");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onLoginClick={() => {}} />
-      
+      <Header currentUser={user} onLogout={logout} onLoginClick={() => { }} />
+
       <main className="flex-1 bg-muted/30">
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
@@ -46,50 +99,6 @@ const AdminDashboard = () => {
             <KPICard name="Budget Used" current={68} target={75} />
           </div>
 
-          {/* Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Project Status Overview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={projectData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="completed" fill="hsl(var(--success))" name="Completed" />
-                    <Bar dataKey="ongoing" fill="hsl(var(--primary))" name="Ongoing" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Organization KPI Trend</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={kpiTrend}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="score" 
-                      stroke="hsl(var(--primary))" 
-                      strokeWidth={2}
-                      name="KPI Score"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Admin Actions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <Card className="hover:shadow-lg transition-shadow cursor-pointer">
@@ -97,9 +106,51 @@ const AdminDashboard = () => {
                 <Users className="mx-auto mb-3 text-primary" size={32} />
                 <h3 className="font-semibold mb-1">User Management</h3>
                 <p className="text-sm text-muted-foreground mb-3">Manage users & roles</p>
-                <Button size="sm" variant="outline" className="w-full">
-                  Manage
-                </Button>
+                <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" variant="outline" className="w-full">
+                      Add User
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add New User</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddUser} className="space-y-4">
+                      <div>
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" name="name" value={userData.name} onChange={handleInputChange} required />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" name="email" type="email" value={userData.email} onChange={handleInputChange} required />
+                      </div>
+                      <div>
+                        <Label htmlFor="password">Password</Label>
+                        <Input id="password" name="password" type="password" value={userData.password} onChange={handleInputChange} required />
+                      </div>
+                      <div>
+                        <Label htmlFor="role">Role</Label>
+                        <Select onValueChange={handleRoleChange} defaultValue={userData.role}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="supervisor">Supervisor</SelectItem>
+                            <SelectItem value="employee">Employee</SelectItem>
+                            <SelectItem value="ippms_admin">IPPMS Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="department">Department</Label>
+                        <Input id="department" name="department" value={userData.department} onChange={handleInputChange} />
+                      </div>
+                      <Button type="submit" className="w-full">Create User</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
 

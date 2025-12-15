@@ -1,133 +1,150 @@
-const fs = require('fs');
-const path = require('path');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const dotenv = require('dotenv');
+const User = require('./models/User');
 
-const DB_PATH = path.join(__dirname, 'database.json');
+dotenv.config();
 
 const seed = async () => {
-    const hashedPassword = await bcrypt.hash('password', 10);
+    try {
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/sih2520');
+        console.log('MongoDB Connected');
 
-    const data = {
-        users: [
+        // Clear existing data
+        await User.deleteMany({});
+        console.log('Users collection cleared');
+
+        const hashedPassword = await bcrypt.hash('password', 10);
+
+        const users = [
             {
-                _id: '1',
                 name: 'Admin User',
                 email: 'admin@brahmaputraboard.gov.in',
                 password: hashedPassword,
                 role: 'admin',
                 department: 'Administration',
-                position: 'System Administrator',
-                createdAt: new Date(),
-                updatedAt: new Date()
+                position: 'System Administrator'
             },
             {
-                _id: '2',
                 name: 'Supervisor User',
                 email: 'supervisor@brahmaputraboard.gov.in',
                 password: hashedPassword,
                 role: 'supervisor',
                 department: 'Engineering',
-                position: 'Chief Engineer',
-                createdAt: new Date(),
-                updatedAt: new Date()
+                position: 'Chief Engineer'
             },
             {
-                _id: '3',
                 name: 'Employee User',
                 email: 'employee@brahmaputraboard.gov.in',
                 password: hashedPassword,
                 role: 'employee',
                 department: 'Engineering',
-                position: 'Junior Engineer',
-                createdAt: new Date(),
-                updatedAt: new Date()
+                position: 'Junior Engineer'
             }
-        ],
-        kpis: [
+        ];
+
+        const createdUsers = await User.insertMany(users);
+        console.log('Users seeded');
+
+        // Create other models
+        const Project = require('./models/Project');
+        const Ticket = require('./models/Ticket');
+        const KPI = require('./models/KPI');
+        const Expense = require('./models/Expense');
+        const PerformanceScore = require('./models/PerformanceScore');
+
+        await Project.deleteMany({});
+        await Ticket.deleteMany({});
+        await KPI.deleteMany({});
+        await Expense.deleteMany({});
+        await PerformanceScore.deleteMany({});
+
+        const supervisor = createdUsers.find(u => u.role === 'supervisor');
+        const employee = createdUsers.find(u => u.role === 'employee');
+
+        // Projects
+        const projects = await Project.insertMany([
             {
-                _id: '1',
-                name: 'File Disposal Rate',
-                description: 'Number of files processed per day',
-                category: 'headquarters',
-                weight: 20,
-                targetValue: 10,
-                unit: 'files/day',
-                applicableRoles: ['employee', 'supervisor'],
-                createdAt: new Date(),
-                updatedAt: new Date()
-            },
-            {
-                _id: '2',
-                name: 'Turnaround Time',
-                description: 'Average time taken to process a file',
-                category: 'headquarters',
-                weight: 15,
-                targetValue: 2,
-                unit: 'days',
-                applicableRoles: ['employee', 'supervisor'],
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ],
-        performanceScores: [
-            {
-                _id: '1',
-                userId: '3',
-                kpiId: '1',
-                value: 8,
-                date: new Date('2023-10-01'),
-                notes: 'Good performance but can improve',
-                createdAt: new Date(),
-                updatedAt: new Date()
-            }
-        ],
-        projects: [
-            {
-                _id: '1',
                 name: 'Brahmaputra River Basin Study',
                 description: 'Comprehensive study of the Brahmaputra river basin',
                 startDate: new Date('2023-01-01'),
                 endDate: new Date('2023-12-31'),
                 budget: 5000000,
                 status: 'in-progress',
-                manager: '2',
-                team: ['3'],
-                createdAt: new Date(),
-                updatedAt: new Date()
+                manager: supervisor._id,
+                team: [employee._id]
             }
-        ],
-        expenses: [
+        ]);
+        console.log('Projects seeded');
+
+        // KPIs
+        const kpis = await KPI.insertMany([
             {
-                _id: '1',
-                projectId: '1',
+                name: 'File Disposal Rate',
+                description: 'Number of files processed per day',
+                category: 'headquarters',
+                weight: 20,
+                targetValue: 10,
+                unit: 'files/day',
+                applicableRoles: ['employee', 'supervisor']
+            },
+            {
+                name: 'Turnaround Time',
+                description: 'Average time taken to process a file',
+                category: 'headquarters',
+                weight: 15,
+                targetValue: 2,
+                unit: 'days',
+                applicableRoles: ['employee', 'supervisor']
+            }
+        ]);
+        console.log('KPIs seeded');
+
+        // Tickets
+        await Ticket.insertMany([
+            {
+                title: 'Request for project information',
+                description: 'RTI request for information about the Brahmaputra River Basin Study',
+                createdBy: 'public@example.com',
+                assignedTo: supervisor._id,
+                status: 'open',
+                priority: 'medium',
+                category: 'rti'
+            }
+        ]);
+        console.log('Tickets seeded');
+
+        // Expenses
+        await Expense.insertMany([
+            {
+                projectId: projects[0]._id,
                 amount: 50000,
                 category: 'Equipment',
                 date: new Date('2023-02-15'),
                 description: 'Purchase of survey equipment',
-                approvedBy: '2',
-                status: 'approved',
-                createdAt: new Date(),
-                updatedAt: new Date()
+                approvedBy: supervisor._id,
+                status: 'approved'
             }
-        ],
-        tickets: [
-            {
-                _id: '1',
-                title: 'Request for project information',
-                description: 'RTI request for information about the Brahmaputra River Basin Study',
-                createdBy: 'public@example.com',
-                assignedTo: '1',
-                status: 'open',
-                priority: 'medium',
-                category: 'rti',
-                createdAt: new Date('2023-10-01'),
-                updatedAt: new Date('2023-10-01')
-            }
-        ]
-    };
+        ]);
+        console.log('Expenses seeded');
 
-    fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
-    console.log('Database seeded successfully');
+        // Performance Scores
+        await PerformanceScore.insertMany([
+            {
+                userId: employee._id,
+                kpiId: kpis[0]._id,
+                value: 8,
+                date: new Date('2023-10-01'),
+                notes: 'Good performance but can improve'
+            }
+        ]);
+        console.log('Performance Scores seeded');
+
+        process.exit();
+    } catch (error) {
+        console.error('Error seeding database:', error);
+        process.exit(1);
+    }
 };
 
 seed();

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 interface LoginModalProps {
   open: boolean;
@@ -12,51 +13,45 @@ interface LoginModalProps {
 }
 
 const roles = [
-  { id: "secretary", name: "Water Resources Secretary" },
-  { id: "admin", name: "Chief Engineer (Admin)" },
-  { id: "technical", name: "Chief Engineer (Technical)" },
-  { id: "supervisor", name: "Superintending Engineer" },
-  { id: "executive", name: "Executive Engineer" },
-  { id: "assistant", name: "Assistant Engineer" },
-  { id: "junior", name: "Junior Engineer" },
-  { id: "contractor", name: "Contractor" },
-  { id: "clerk", name: "Clerk / Office Assistant" },
-  { id: "surveyor", name: "Surveyor" },
+  { id: "admin", name: "Administrator" },
+  { id: "supervisor", name: "Supervisor" },
+  { id: "employee", name: "Employee" },
+  { id: "ippms_admin", name: "iPPMS Admin" },
 ];
 
 export const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = () => {
-    // Simulate login
-    onOpenChange(false);
-    
-    // Map role to dashboard route
-    const roleRouteMap: Record<string, string> = {
-      admin: "admin",
-      technical: "admin",
-      secretary: "admin",
-      supervisor: "supervisor",
-      executive: "supervisor",
-      contractor: "employee",
-      assistant: "employee",
-      junior: "employee",
-      clerk: "employee",
-      surveyor: "employee",
-    };
-    
-    const route = roleRouteMap[selectedRole] || "employee";
-    navigate(`/dashboard/${route}`);
-    
-    // Reset
-    setTimeout(() => {
-      setEmail("");
-      setPassword("");
-      setSelectedRole("");
-    }, 300);
+  const handleLogin = async () => {
+    try {
+      setError(null);
+      await login(email, password);
+      onOpenChange(false);
+
+      const roleRouteMap: Record<string, string> = {
+        admin: "admin",
+        supervisor: "supervisor",
+        employee: "employee",
+        ippms_admin: "ippms",
+      };
+
+      const route = roleRouteMap[selectedRole] || "employee";
+
+      if (route === "ippms") {
+        navigate("/ippms");
+      } else {
+        navigate(`/dashboard/${route}`);
+      }
+
+    } catch (err) {
+      setError("Login failed. Please check your credentials.");
+      console.error(err);
+    }
   };
 
   const handleSSOLogin = () => {
@@ -110,9 +105,11 @@ export const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             />
           </div>
 
-          <Button 
-            variant="gov-primary" 
-            onClick={handleLogin} 
+          {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+
+          <Button
+            variant="gov-primary"
+            onClick={handleLogin}
             className="w-full"
             disabled={!selectedRole || !email || !password}
           >

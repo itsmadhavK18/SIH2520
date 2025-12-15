@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, FileCheck, AlertTriangle, MapPin } from "lucide-react";
 
+import { useAuth } from "@/context/AuthContext";
+
 const SupervisorDashboard = () => {
+  const { user, logout } = useAuth();
   const projects = [
     { id: 1, name: "Upper Assam Flood Control - Phase II", progress: 68, status: "on-track" },
     { id: 2, name: "Brahmaputra River Embankment Strengthening", progress: 45, status: "delayed" },
@@ -20,14 +23,14 @@ const SupervisorDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header onLoginClick={() => {}} />
-      
+      <Header currentUser={user} onLogout={logout} onLoginClick={() => { }} />
+
       <main className="flex-1 bg-muted/30">
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Supervisor Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, Dr. Suresh Patel (Executive Engineer)</p>
+            <p className="text-muted-foreground">Welcome back, {user?.name || "Supervisor"} ({user?.position || "Senior Engineer"})</p>
           </div>
 
           {/* KPI Cards */}
@@ -53,25 +56,23 @@ const SupervisorDashboard = () => {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="font-semibold">{project.name}</h3>
-                        <span className={`text-xs px-2 py-0.5 rounded mt-1 inline-block ${
-                          project.status === "on-track" ? "bg-success/10 text-success" :
+                        <span className={`text-xs px-2 py-0.5 rounded mt-1 inline-block ${project.status === "on-track" ? "bg-success/10 text-success" :
                           project.status === "ahead" ? "bg-primary/10 text-primary" :
-                          "bg-warning/10 text-warning"
-                        }`}>
+                            "bg-warning/10 text-warning"
+                          }`}>
                           {project.status === "on-track" ? "On Track" :
-                           project.status === "ahead" ? "Ahead of Schedule" :
-                           "Needs Attention"}
+                            project.status === "ahead" ? "Ahead of Schedule" :
+                              "Needs Attention"}
                         </span>
                       </div>
                       <Button size="sm">View Details</Button>
                     </div>
                     <div className="progress-bar">
                       <div
-                        className={`progress-fill ${
-                          project.status === "on-track" ? "bg-success" :
+                        className={`progress-fill ${project.status === "on-track" ? "bg-success" :
                           project.status === "ahead" ? "bg-primary" :
-                          "bg-warning"
-                        }`}
+                            "bg-warning"
+                          }`}
                         style={{ width: `${project.progress}%` }}
                       />
                     </div>
