@@ -79,6 +79,17 @@ export interface Report {
   createdAt: string;
 }
 
+export interface Request {
+  _id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdBy: User | string;
+  department: string;
+  reason?: string;
+  createdAt: string;
+}
+
 // Helper to handle fetch errors
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
@@ -210,6 +221,7 @@ export const api = {
 
   // Reports
   uploadReport: async (formData: FormData): Promise<Report> => {
+    console.log(`Uploading to: ${API_URL}/reports/upload`);
     const response = await fetch(`${API_URL}/reports/upload`, {
       method: 'POST',
       body: formData, // Content-Type header excluded for FormData
@@ -224,6 +236,35 @@ export const api = {
 
   getMyReports: async (userId: string): Promise<Report[]> => {
     const response = await fetch(`${API_URL}/reports/user/${userId}`);
+    return handleResponse(response);
+  },
+
+  // Requests
+  createRequest: async (data: Partial<Request>): Promise<Request> => {
+    const response = await fetch(`${API_URL}/requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+
+  getAllRequests: async (): Promise<Request[]> => {
+    const response = await fetch(`${API_URL}/requests`);
+    return handleResponse(response);
+  },
+
+  getMyRequests: async (userId: string): Promise<Request[]> => {
+    const response = await fetch(`${API_URL}/requests/user/${userId}`);
+    return handleResponse(response);
+  },
+
+  updateRequestStatus: async (id: string, status: Request['status'], reason?: string): Promise<Request> => {
+    const response = await fetch(`${API_URL}/requests/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, reason }),
+    });
     return handleResponse(response);
   }
 };

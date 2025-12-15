@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 
 import { ReportList } from "@/components/ReportList";
+import { RequestManagementList } from "@/components/RequestManagementList";
 
 import { useAuth } from "@/context/AuthContext";
 
@@ -230,8 +231,9 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <div className="mt-6">
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <ReportList isAdmin />
+            <RequestManagementList isAdmin />
           </div>
         </div>
       </main >

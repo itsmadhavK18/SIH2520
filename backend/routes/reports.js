@@ -8,9 +8,11 @@ const auth = require('../models/User'); // Implies we need middleware to verify 
 // Checking projects.js for pattern.
 
 // Configure storage
+// Configure storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/');
+        // Resolve path relative to this file (backend/routes/reports.js) -> backend/uploads
+        cb(null, path.join(__dirname, '../uploads'));
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

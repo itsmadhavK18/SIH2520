@@ -6,16 +6,64 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Clock, AlertCircle, FileText, Upload } from "lucide-react";
 import { ReportUploadModal } from "@/components/ReportUploadModal";
 import { ReportList } from "@/components/ReportList";
+import { RequestCreationModal } from "@/components/RequestCreationModal";
+import { RequestManagementList } from "@/components/RequestManagementList";
+import { useState } from "react";
+import { TaskDetailModal } from "@/components/TaskDetailModal";
 
 import { useAuth } from "@/context/AuthContext";
 
 const EmployeeDashboard = () => {
   const { user, logout } = useAuth();
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+
+  const handleViewTask = (task: any) => {
+    setSelectedTask(task);
+    setDetailOpen(true);
+  };
+
   const tasks = [
-    { id: 1, title: "Complete survey data entry for Project BB-2024-01", status: "pending", priority: "high" },
-    { id: 2, title: "Review DPR draft for Upper Assam flood control", status: "in-progress", priority: "medium" },
-    { id: 3, title: "Submit monthly progress report", status: "pending", priority: "high" },
-    { id: 4, title: "Attend project review meeting", status: "completed", priority: "low" },
+    {
+      id: 1,
+      title: "Complete survey data entry for Project BB-2024-01",
+      status: "pending",
+      priority: "high",
+      description: "Enter the field survey data collected from the North Bank site into the central database. Ensure all GPS coordinates are accurate.",
+      dueDate: "Dec 20, 2024",
+      assignee: "Rajesh Kumar (Supervisor)",
+      project: "Brahmaputra Embankment Project"
+    },
+    {
+      id: 2,
+      title: "Review DPR draft for Upper Assam flood control",
+      status: "in-progress",
+      priority: "medium",
+      description: "Review the technical specifications and cost estimates in the Phase-II DPR. Provide comments on the hydraulic modeling section.",
+      dueDate: "Dec 22, 2024",
+      assignee: "Suresh Patel (Project Manager)",
+      project: "Upper Assam Flood Control"
+    },
+    {
+      id: 3,
+      title: "Submit monthly progress report",
+      status: "pending",
+      priority: "high",
+      description: "Compile the physical and financial progress for November 2024. Include site photographs and updated Gantt charts.",
+      dueDate: "Dec 18, 2024",
+      assignee: "Admin Dept.",
+      project: "General Administration"
+    },
+    {
+      id: 4,
+      title: "Attend project review meeting",
+      status: "completed",
+      priority: "low",
+      description: "Monthly review meeting with the Chief Engineer to discuss milestones and bottlenecks.",
+      dueDate: "Dec 15, 2024",
+      assignee: "Chief Engineer Office",
+      project: "All Projects"
+    },
   ];
 
   const getStatusIcon = (status: string) => {
@@ -56,7 +104,8 @@ const EmployeeDashboard = () => {
                   {tasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-start gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                      className="flex items-start gap-3 p-4 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                      onClick={() => handleViewTask(task)}
                     >
                       {getStatusIcon(task.status)}
                       <div className="flex-1">
@@ -71,9 +120,7 @@ const EmployeeDashboard = () => {
                           <span className="text-xs text-muted-foreground capitalize">{task.status}</span>
                         </div>
                       </div>
-                      {task.status !== "completed" && (
-                        <Button size="sm" variant="outline">View</Button>
-                      )}
+                      <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleViewTask(task); }}>View</Button>
                     </div>
                   ))}
                 </div>
@@ -86,10 +133,13 @@ const EmployeeDashboard = () => {
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="gov-primary" className="w-full justify-start" size="lg">
-                  <FileText size={18} />
-                  Create Request
-                </Button>
+                <RequestCreationModal onSuccess={() => window.location.reload()}>
+                  <Button variant="gov-primary" className="w-full justify-start" size="lg">
+                    <FileText size={18} />
+                    Create Request
+                  </Button>
+                </RequestCreationModal>
+
                 <ReportUploadModal onSuccess={() => window.location.reload()}>
                   <Button variant="outline" className="w-full justify-start" size="lg">
                     <Upload size={18} className="mr-2" />
@@ -104,8 +154,13 @@ const EmployeeDashboard = () => {
             </Card>
           </div>
 
-          <div className="mt-6">
-            <ReportList userId={user?.id} />
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-6">
+              <ReportList userId={user?.id} />
+            </div>
+            <div className="space-y-6">
+              <RequestManagementList userId={user?.id} />
+            </div>
           </div>
 
           {/* Notifications */}
@@ -132,6 +187,7 @@ const EmployeeDashboard = () => {
       </main>
 
       <Footer />
+      <TaskDetailModal task={selectedTask} open={detailOpen} onOpenChange={setDetailOpen} />
     </div>
   );
 };

@@ -4,58 +4,47 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, File } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { api } from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
-interface ReportUploadModalProps {
+interface RequestCreationModalProps {
     children?: React.ReactNode;
     onSuccess?: () => void;
 }
 
-export const ReportUploadModal: React.FC<ReportUploadModalProps> = ({ children, onSuccess }) => {
+export const RequestCreationModal: React.FC<RequestCreationModalProps> = ({ children, onSuccess }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [file, setFile] = useState<File | null>(null);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0]);
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!file || !user) return;
+        if (!user) return;
 
         try {
             setLoading(true);
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('title', title);
-            formData.append('description', description);
-            formData.append('uploadedBy', user.id);
-            formData.append('department', user.department);
+            await api.createRequest({
+                title,
+                description,
+                createdBy: user.id,
+                department: user.department
+            });
 
-            await api.uploadReport(formData);
-
-            toast.success('Report uploaded successfully');
+            toast.success('Request submitted successfully');
             setOpen(false);
-            // Reset form
             setTitle('');
             setDescription('');
-            setFile(null);
 
             if (onSuccess) onSuccess();
         } catch (error) {
             console.error(error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            toast.error(`Failed to upload report: ${errorMessage}`);
+            toast.error(`Failed to submit request: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
@@ -66,56 +55,43 @@ export const ReportUploadModal: React.FC<ReportUploadModalProps> = ({ children, 
             <DialogTrigger asChild>
                 {children || (
                     <Button variant="outline">
-                        <Upload className="w-4 h-4 mr-2" />
-                        Upload Report
+                        <FileText className="w-4 h-4 mr-2" />
+                        Create Request
                     </Button>
                 )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Upload Report</DialogTitle>
+                    <DialogTitle>Create New Request</DialogTitle>
                     <DialogDescription>
-                        Fill in the details below to upload a new report. Supported files: PDF, Excel, Images.
+                        Submit a request for approval.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                     <div className="space-y-2">
-                        <Label htmlFor="title">Report Title</Label>
+                        <Label htmlFor="req-title">Subject</Label>
                         <Input
-                            id="title"
+                            id="req-title"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="e.g., Monthly Progress Report"
+                            placeholder="e.g., Leave Application, IT Resource"
                             required
                         />
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="req-desc">Description</Label>
                         <Textarea
-                            id="description"
+                            id="req-desc"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Brief description of the report contents"
+                            placeholder="Detailed explanation of your request"
+                            required
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="file">File (PDF, Images, Excel)</Label>
-                        <div className="flex items-center gap-2">
-                            <Input
-                                id="file"
-                                type="file"
-                                accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls"
-                                onChange={handleFileChange}
-                                required
-                                className="cursor-pointer"
-                            />
-                        </div>
-                    </div>
-
-                    <Button type="submit" className="w-full" disabled={loading || !file}>
-                        {loading ? 'Uploading...' : 'Submit Report'}
+                    <Button type="submit" className="w-full" disabled={loading}>
+                        {loading ? 'Submitting...' : 'Submit Request'}
                     </Button>
                 </form>
             </DialogContent>
